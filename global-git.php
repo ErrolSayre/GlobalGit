@@ -14,10 +14,9 @@ if (count($argv) > 1) {
 }
 if (count($arguments)) {
 	$arguments = implode(' ', $arguments);
-} else {
-	$arguments = 'status';
 }
 
+// only continue if there are arguments
 // locate git repositories in the current tree
 $response = `find . -name ".git" -type d`;
 $matches = explode(LF, $response);
@@ -26,9 +25,13 @@ foreach ($matches as $match) {
 		// locate the parent directory
 		$match = pathinfo($match, PATHINFO_DIRNAME);
 		echo $match, LF;
-		// remove the leading . placed by find
-		$match = $dir.ltrim($match, '.');
-		chdir($match);
-		echo `git $arguments`, LF;
+		
+		// only act upon this repo if there are arguments
+		if ($arguments) {
+			// remove the leading . placed by find
+			$match = $dir.ltrim($match, '.');
+			chdir($match);
+			echo `git $arguments`, LF;
+		}
 	}
 }
