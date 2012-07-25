@@ -18,7 +18,7 @@ if (count($arguments)) {
 
 // only continue if there are arguments
 // locate git repositories in the current tree
-$response = `find . -name ".git" -type d`;
+$response = `find . -name "*.git" -type d`;
 $matches = explode(LF, $response);
 foreach ($matches as $match) {
 	if ($match) {
