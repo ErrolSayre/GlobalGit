@@ -18,20 +18,28 @@ if (count($arguments)) {
 
 // only continue if there are arguments
 // locate git repositories in the current tree
-$response = `find . -name "*.git" -type d`;
+$response = shell_exec('find . -name "*.git" -type d');
 $matches = explode(LF, $response);
 foreach ($matches as $match) {
 	if ($match) {
-		// locate the parent directory
-		$match = pathinfo($match, PATHINFO_DIRNAME);
-		echo $match, LF;
+		// determine if this match is a repo
+		chdir($dir.'/'.$match);
+		$isBare = shell_exec('git config core.bare');
+		
+		if (strpos($isBare, 'true') !== false) {
+			// there will be no working directory, so assume the commands will work on bare repos
+			echo $match, ' (bare repo)', LF;
+		} else {
+			// since this isn't a bare repo, assume the parent directory is the working copy
+			$match = pathinfo($match, PATHINFO_DIRNAME);
+			chdir($dir.'/'.$match);
+			echo $match, LF;
+		}
 		
 		// only act upon this repo if there are arguments
 		if ($arguments) {
-			// remove the leading . placed by find
-			$match = $dir.ltrim($match, '.');
-			chdir($match);
-			echo `git $arguments`, LF;
+			passthru('git '.$arguments);
+			echo LF, LF;
 		}
 	}
 }
