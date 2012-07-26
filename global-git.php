@@ -28,7 +28,7 @@ foreach ($matches as $match) {
 		
 		if (strpos($isBare, 'true') !== false) {
 			// there will be no working directory, so assume the commands will work on bare repos
-			echo $match, ' (bare repo)', LF;
+			echo $match, ' (bare)', LF;
 		} else {
 			// since this isn't a bare repo, assume the parent directory is the working copy
 			$match = pathinfo($match, PATHINFO_DIRNAME);
